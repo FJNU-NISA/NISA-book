@@ -1,0 +1,36 @@
+project:
+  type: book
+
+book:
+  title: "NISA-book"
+  author: "Network Information Security Association"
+  date: "2024/12/13"
+  chapters:
+    - index.qmd
+    - intro.qmd
+    - summary.qmd
+    - part: Penetration - 渗透测试
+      chapters:
+      - Penetration/intro.qmd
+    - references.qmd
+
+bibliography: references.bib
+
+format:
+  html:
+    theme: cosmo
+  pdf:
+    documentclass: scrreprt
+    geometry:
+    - top=20mm
+    - left=20mm
+    - bottom=20mm
+    - right=20mm
+    highlight: pygments
+    include-in-header: 
+      text: |
+        \usepackage{ctex}
+        \usepackage{amsthm,mathrsfs}
+        \pagestyle{empty}
+
+
