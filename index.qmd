@@ -1,5 +1,9 @@
 # Preface {.unnumbered}
 
-This is a Quarto book.
+本书由 FJNU - 福建师范大学 的 NISA - Network Information Security Association 协会集体编著
 
-To learn more about Quarto books visit <https://quarto.org/docs/books>.
+以下为大版本更新信息
+
+| Leader  |  Time   | Description |
+| :-----: | :-----: | :---------: |
+| Randark | 2024-12 | Create v0.1 |
