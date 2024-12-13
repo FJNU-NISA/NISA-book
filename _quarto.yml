@@ -3,12 +3,15 @@ project:
 
 book:
   title: "NISA-book"
-  author: "Network Information Security Association"
+  author: "NISA - Network Information Security Association"
   date: "2024/12/13"
   chapters:
     - index.qmd
     - intro.qmd
     - summary.qmd
+    - part: CTF - 夺旗赛
+      chapters: 
+        - CTF/intro.qmd
     - part: Penetration - 渗透测试
       chapters:
       - Penetration/intro.qmd
@@ -20,7 +23,8 @@ format:
   html:
     theme: cosmo
   pdf:
-    documentclass: scrreprt
+    documentclass: scrbook
+    # classoption: oneside # 强制使用单面模式
     geometry:
     - top=20mm
     - left=20mm
@@ -31,6 +35,15 @@ format:
       text: |
         \usepackage{ctex}
         \usepackage{amsthm,mathrsfs}
-        \pagestyle{empty}
+        \usepackage{fancyhdr}
+        
+        \pagestyle{fancy}
+        \fancyhf{}  % 清空默认页眉页脚
+        \setlength{\footskip}{12mm}  % 调整页脚高度
 
-
+        % 设置奇偶页的页脚格式，页码和章节信息在同一侧
+        \fancyfoot[LE]{\thepage\quad\rightmark} % 偶数页左侧显示页码+章节信息
+        \fancyfoot[RO]{\rightmark\quad\thepage}  % 奇数页右侧显示章节信息+页码
+        
+        % 自定义章节信息的显示方式
+        \renewcommand{\chaptermark}[1]{\markboth{\chaptername\ \thechapter\ #1}{}}
