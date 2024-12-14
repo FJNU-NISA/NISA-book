@@ -12,12 +12,19 @@ book:
     - part: CTF - 夺旗赛
       chapters: 
         - CTF/intro.qmd
+        - CTF/Misc/intro.md
     - part: Penetration - 渗透测试
       chapters:
-      - Penetration/intro.qmd
+        - Penetration/intro.qmd
+    - part: Attack-Defense - 红蓝攻防
+      chapters: 
+        - Attack-Defense/intro.qmd
     - part: DevSecOps - 开发、安全和运维
       chapters:
-      - DevSecOps/intro.qmd
+        - DevSecOps/intro.qmd
+    - part: ICS - 工业安全
+      chapters: 
+        - ICS/intro.qmd
     - references.qmd
 
 bibliography: references.bib
@@ -33,11 +40,12 @@ format:
     - left=20mm
     - bottom=20mm
     - right=20mm
-    highlight: pygments
+    highlight-style: github
     include-in-header: 
       text: |
         \usepackage{ctex}
         \usepackage{amsthm,mathrsfs}
+        \usepackage{graphicx}
         \usepackage{fancyhdr}
         
         \pagestyle{fancy}
@@ -50,3 +58,7 @@ format:
         
         % 自定义章节信息的显示方式
         \renewcommand{\chaptermark}[1]{\markboth{\chaptername\ \thechapter\ #1}{}}
+
+        % 强制在章节标题后添加首行缩进
+        \usepackage{indentfirst}  % 使每段第一行都缩进
+        \setlength{\parindent}{2em}  % 设置缩进宽度，可以根据需要调整
