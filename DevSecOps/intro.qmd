@@ -1,0 +1,7 @@
+# DevSecOps 简介
+
+`DevSecOps` 是一个组合缩写，其由三个单词 `Develop`, `Security`, `Operations` 的缩写组成，分别为开发、安全和运营
+
+这个概念可以结合软件开发生命周期来进行思考
+
+developper

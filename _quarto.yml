@@ -15,6 +15,9 @@ book:
     - part: Penetration - 渗透测试
       chapters:
       - Penetration/intro.qmd
+    - part: DevSecOps - 开发、安全和运维
+      chapters:
+      - DevSecOps/intro.qmd
     - references.qmd
 
 bibliography: references.bib
