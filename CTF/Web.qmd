@@ -1,0 +1,25 @@
+# CTF - Web - 互联网应用安全
+
+## SQL Injection - SQL 注入
+
+## RCE - 远程命令执行
+
+## File Upload - 文件上传
+
+## XSS - 跨站脚本攻击
+
+## SSRF - 服务端请求伪造
+
+### XXE - XML外部实体注入
+
+## CSRF - 跨站请求伪造
+
+## SSTI - 模板注入
+
+## 语言特性
+
+### PHP 语言特性
+
+### Java 语言特性
+
+### Python 语言特性

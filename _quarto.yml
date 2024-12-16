@@ -12,13 +12,24 @@ book:
     - part: CTF - 夺旗赛
       chapters: 
         - CTF/intro.qmd
-        - CTF/Misc/intro.md
+        - CTF/Crypto.md
+        - CTF/Misc.qmd
+        - CTF/Pwn.qmd
+        - CTF/Reverse.qmd
+        - CTF/Web.qmd
     - part: Penetration - 渗透测试
       chapters:
         - Penetration/intro.qmd
-    - part: Attack-Defense - 红蓝攻防
+        - Penetration/Privilege Escalation.qmd
+    - part: Forensic - 电子取证
       chapters: 
-        - Attack-Defense/intro.qmd
+        - Forensic/intro.qmd
+    - part: Incident Response - 应急响应
+      chapters: 
+        - Incident Response/intro.qmd
+    - part: Attack Defense - 红蓝攻防
+      chapters: 
+        - Attack Defense/intro.qmd
     - part: DevSecOps - 开发、安全和运维
       chapters:
         - DevSecOps/intro.qmd

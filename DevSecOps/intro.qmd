@@ -1,4 +1,4 @@
-# DevSecOps 简介
+# DevSecOps 概述
 
 `DevSecOps` 是一个组合缩写，其由三个单词 `Develop`, `Security`, `Operations` 的缩写组成，分别为开发、安全和运营
 

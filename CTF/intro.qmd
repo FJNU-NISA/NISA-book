@@ -1,4 +1,4 @@
-# CTF 简介
+# CTF 概述
 
 CTF(Capture The Flag) 是一种在网络安全领域常见的一种竞赛形式，其核心为 Jeopardy 形式，即题目提供环境或者附件作为问题，选手需要对环境或者附件进行操作，解题目标是得到问题中所包含的答案，常见的格式为 `flag{This_is_Flag}` 字符串，这个由 `flag` 头部以及大括号组成的字符串也就是问题的答案，也称为 flag 旗帜。
 
@@ -36,7 +36,7 @@ AI, Blockchains, Forensic, Hardware, Mobile, Osint, Pentest, PPC, Steganography
 
 **Mobile** 即移动安全
 
-**Osint** 即取证分析
+**Osint** 即社工分析
 
 **Pentest** - Penetration 即渗透测试
 
