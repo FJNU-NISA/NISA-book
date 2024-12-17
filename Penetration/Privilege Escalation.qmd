@@ -10,7 +10,7 @@
 
 在 Linux 系统上，权限管理策略不仅仅由 `/etc/passwd` 定义的用户权限组成，还有文件权限。对于文件权限，可以通过 `ls -lh` 命令进行查看。以 `/etc/passwd` 文件为例
 
-```shell
+``` bash
 ls -lh /etc/passwd
 -rw-r--r-- 1 root root 2.1K Nov 15  2023 /etc/passwd
 ```
@@ -21,13 +21,13 @@ ls -lh /etc/passwd
 
 `sudo` 所导致的提权，是由 `/etc/sudoers` 配置文件，或 `/etc/sudoers.d` 目录内的配置文件存在有缺陷的 sudo 策略导致的。默认情况下，`sudo` 的配置文件是无法通过普通用户的权限进行读取，但是可以由以下命令来查看当前用户的 `sudo` 策略
 
-```shell
+```bash
 sudo -l
 ```
 
 可以使用 [GTFOBins - Sudo](https://gtfobins.github.io/#+sudo) 数据库对得到的结果进行排查，`sudo` 所拥有的特性，决定了使用 `sudo` 执行的文件，可以视作 `sudo` 策略所配置的目标用户权限所执行。以 **HackMyVM - Pwned** 靶机作为例子，在获取到 `ariana` 用户的 shell 环境之后，排查 `sudo` 策略
 
-```shell
+```bash
 ariana@pwned:~$ sudo -l
 Matching Defaults entries for ariana on pwned:
     env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin
@@ -60,7 +60,7 @@ int main()
 
 对于其他情况，可以使用以下命令对当前环境拥有 SUID 权限的文件进行扫描
 
-```shell
+```bash
 find / -perm -u=s -type f 2>/dev/null
 ```
 
@@ -86,7 +86,7 @@ find / -perm -u=s -type f 2>/dev/null
 
 借助 `Docker` 服务实现权限提升，常见的做法便是直接操作系统上的安全策略相关的文件。在 `Docker` 的 `Volume` 功能中，可以将宿主系统上的文件或者目录映射进 `Docker` 容器中。为了实现将目录映射进容器进而实现宿主系统上的文件修改，首先需要列出目前 `Docker` 可用的容器镜像，以这份输出为例
 
-```plaintext
+```default
 REPOSITORY                              TAG       IMAGE ID       CREATED        SIZE
 ghcr.io/eugeny/tabby-web                latest    1edfebbb9878   3 days ago     452MB
 portainer/portainer-ee                  2.21.4    4af47f50b1c9   7 weeks ago    331MB
@@ -99,7 +99,7 @@ ghcr.io/kingmo888/rustdesk-api-server   latest    0940480509a6   3 months ago   
 
 这里选择 `ubuntu:22.04` 作为将使用的容器镜像，启动容器
 
-```shell
+```bash
 docker run --rm -it -v /:/host-dir ubuntu:22.04  /bin/bash
 root@ff7d6d73832b:/#
 ```

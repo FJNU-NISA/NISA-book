@@ -7,3 +7,17 @@
 | Leader  |  Time   | Description |
 | :-----: | :-----: | :---------: |
 | Randark | 2024-12 | Create v0.1 |
+
+## 参考资料 - 应急响应
+
+<https://bypass007.github.io/Emergency-Response-Notes/>
+
+<https://www.secrss.com/articles/7374>
+
+<https://websec.readthedocs.io/zh/latest/defense/emergency.html>
+
+<https://www.ddosi.org/baseline-check/>
+
+## 参考资料 - 渗透测试
+
+<https://www.zlg.cn/ipc/article/detail/id/953.html>

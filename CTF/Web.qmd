@@ -1,4 +1,4 @@
-# CTF - Web - 互联网应用安全
+# Web - 互联网应用安全
 
 ## SQL Injection - SQL 注入
 

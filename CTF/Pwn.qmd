@@ -1,4 +1,4 @@
-# CTF - Pwn - 二进制漏洞攻击
+# Pwn - 二进制漏洞攻击
 
 ## Stack Overflow - 栈溢出
 

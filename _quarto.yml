@@ -13,7 +13,10 @@ book:
       chapters: 
         - CTF/intro.qmd
         - CTF/Crypto.md
-        - CTF/Misc.qmd
+        - CTF/Misc/intro.qmd
+        - CTF/Misc/Password Crack.qmd
+        - CTF/Misc/Compressed File.qmd
+        - CTF/Misc/Steganography.qmd
         - CTF/Pwn.qmd
         - CTF/Reverse.qmd
         - CTF/Web.qmd
@@ -51,13 +54,15 @@ format:
     - left=20mm
     - bottom=20mm
     - right=20mm
-    highlight-style: github
+    # keep-tex: true
+
     include-in-header: 
       text: |
         \usepackage{ctex}
         \usepackage{amsthm,mathrsfs}
         \usepackage{graphicx}
         \usepackage{fancyhdr}
+        \usepackage{fvextra}
         
         \pagestyle{fancy}
         \fancyhf{}  % 清空默认页眉页脚
@@ -73,3 +78,7 @@ format:
         % 强制在章节标题后添加首行缩进
         \usepackage{indentfirst}  % 使每段第一行都缩进
         \setlength{\parindent}{2em}  % 设置缩进宽度，可以根据需要调整
+
+        % 代码块换行
+        \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+        \DefineVerbatimEnvironment{OutputCode}{Verbatim}{breaklines,commandchars=\\\{\}}
