@@ -27,6 +27,7 @@ book:
     - part: Forensic - 电子取证
       chapters: 
         - Forensic/intro.qmd
+        - Forensic/tools.qmd
     - part: Incident Response - 应急响应
       chapters: 
         - Incident Response/intro.qmd
@@ -36,6 +37,8 @@ book:
     - part: DevSecOps - 开发、安全和运维
       chapters:
         - DevSecOps/intro.qmd
+        - DevSecOps/Software Supply Chain Security.qmd
+        - DevSecOps/CI-CD.qmd
     - part: ICS - 工业安全
       chapters: 
         - ICS/intro.qmd

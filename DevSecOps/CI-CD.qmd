@@ -1,0 +1,15 @@
+# CI/CD
+
+CI/CD 是持续集成和持续交付 / 部署的缩写，旨在简化并加快软件开发生命周期。
+
+CI(Continuous Integration) 指持续集成，一种自动、高频率将代码更改集成到共享源代码存储库中的做法。
+
+CD(Continuous Delivery and Continuous Deployment) 指持续交互或持续部署，是一个由两部分组成的过程，涉及代码更改的集成、测试和交付。持续交付不会自动部署到生产环境，持续部署则会自动将更新发布到生产环境。
+
+## 自动化服务集成
+
+### Github Action
+
+### Gitlab CI/CD
+
+在 Github 中，自动化 CI/CD 功能被称为 `Github Action`

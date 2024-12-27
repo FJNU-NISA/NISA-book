@@ -21,3 +21,7 @@
 ## 参考资料 - 渗透测试
 
 <https://www.zlg.cn/ipc/article/detail/id/953.html>
+
+## 参考资料 - 软件供应链安全
+
+<http://221.179.172.81/images/20231129/74661701242125825.pdf>
