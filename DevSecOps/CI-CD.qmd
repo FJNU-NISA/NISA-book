@@ -8,8 +8,10 @@ CD(Continuous Delivery and Continuous Deployment) 指持续交互或持续部署
 
 ## 自动化服务集成
 
+在开发技术与云服务快速发展的当下，个人开发者与开源项目可以用于比以前更加丰富的资源，其中就包括了各大代码托管平台的自动化服务集成。从 Github 到 Gitlab、Gitee 等平台，都相继推出了自己的 CI/CD 服务，推动个人开发者与开源项目的发展。
+
 ### Github Action
 
-### Gitlab CI/CD
+在 Github 中，自动化 CI/CD 功能被称为 `Github Action` 服务，面对公开的仓库是完全免费的。对于 `Github Action` 而言，其不单单只是一个 CI/CD 服务，其多样化的语法和社区模块，使其可以完成花样繁多的各种自动化流程，从个人网站的建设，到自动化编译代码，再到周期性更新代码，只要代码逻辑可以表述的功能，都可以借助 `Github Action` 强大的基础设施和计算资源来实现。
 
-在 Github 中，自动化 CI/CD 功能被称为 `Github Action`
+### Gitlab CI/CD
