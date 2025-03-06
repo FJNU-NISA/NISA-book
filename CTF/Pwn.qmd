@@ -1,19 +1,228 @@
 # Pwn - 二进制漏洞攻击
 
+Pwn 是 CTF 竞赛中的一个重要方向，主要涉及二进制程序的漏洞分析和利用，包括栈溢出、堆溢出、格式化字符串漏洞等。
+
 ## Stack Overflow - 栈溢出
+
+栈溢出是最常见的二进制漏洞之一，通过覆盖栈上的返回地址或关键数据实现攻击。
+
+- **原理**：当程序向栈上写入数据时，未检查输入长度，导致覆盖返回地址或其他关键数据。
+- **利用方式**：
+  - 覆盖返回地址，跳转到 shellcode 或目标函数。
+  - 覆盖函数指针，劫持程序流程。
+- **防御机制**：
+  - **栈保护**：如 Canary、ASLR（地址空间布局随机化）。
+  - **DEP**：数据执行保护，防止执行栈上的代码。
+- **工具**：
+  - `gdb`：用于调试和分析栈溢出漏洞。
+  - `pwntools`：用于编写漏洞利用脚本。
+- **示例**：
+  
+  ```python
+  from pwn import *
+  p = process('./vuln')
+  payload = b'A' * 64 + p32(0x0804856b)  # 覆盖返回地址
+  p.sendline(payload)
+  p.interactive()
+  ```
 
 ## Heap Overflow - 堆溢出
 
+堆溢出是通过覆盖堆上的数据实现攻击，通常用于利用堆管理器的漏洞。
+
+- **原理**：当程序向堆上写入数据时，未检查输入长度，导致覆盖相邻内存块或堆管理结构。
+- **利用方式**：
+  - 覆盖堆管理结构（如 `malloc` 的 `chunk`），实现任意地址写。
+  - 利用 `Use After Free`（UAF）漏洞。
+- **防御机制**：
+  - **堆保护**：如 `Safe Unlinking`、`Heap Canary`。
+  - **ASLR**：随机化堆地址。
+- **工具**：
+  - `gef`：用于调试堆溢出漏洞。
+  - `pwndbg`：GDB 插件，支持堆分析。
+- **示例**：
+  
+  ```python
+  from pwn import *
+  p = process('./vuln')
+  payload = b'A' * 64 + p32(0x0804856b)  # 覆盖堆管理结构
+  p.sendline(payload)
+  p.interactive()
+  ```
+
 ## Integer Overflow - 整数溢出
+
+整数溢出是通过利用整数运算的溢出实现攻击。
+
+- **原理**：当整数运算结果超出数据类型范围时，导致意外行为。
+- **利用方式**：
+  - 绕过长度检查，实现缓冲区溢出。
+  - 修改关键变量，劫持程序流程。
+- **防御机制**：
+  - **整数检查**：在运算前检查数据范围。
+  - **安全库**：如 `SafeInt`。
+- **示例**：
+  
+  ```c
+  int len = 0x7fffffff;
+  char buf[1024];
+  memcpy(buf, input, len + 1);  // 整数溢出导致缓冲区溢出
+  ```
 
 ## Format String Vulnerability - 格式化字符串漏洞
 
+格式化字符串漏洞是通过控制格式化字符串实现任意内存读写。
+
+- **原理**：当程序使用用户输入的格式化字符串时，未进行检查，导致任意内存读写。
+- **利用方式**：
+  - 读取栈上的敏感数据（如 Canary、返回地址）。
+  - 写入任意地址（如 GOT 表）。
+- **防御机制**：
+  - **格式化字符串检查**：禁止使用用户输入的格式化字符串。
+  - **只读 GOT**：防止通过 GOT 表劫持程序流程。
+- **工具**：
+  - `fmtstr`：用于自动化格式化字符串漏洞利用。
+- **示例**：
+  
+  ```python
+  from pwn import *
+  p = process('./vuln')
+  payload = b'%08x.' * 10  # 读取栈上的数据
+  p.sendline(payload)
+  print(p.recv())
+  ```
+
 ## ROP - Return-oriented Programming - 返回地址覆盖
+
+ROP 是通过利用程序中的代码片段（`gadget`）实现攻击。
+
+- **原理**：通过覆盖返回地址，跳转到一系列 `gadget`，实现任意代码执行。
+- **利用方式**：
+  - 构造 ROP 链，执行系统调用（如 `execve`）。
+  - 绕过 DEP 和 ASLR。
+- **防御机制**：
+  - **ASLR**：随机化代码地址。
+  - **CFI**：控制流完整性，防止跳转到非法地址。
+- **工具**：
+  - `ROPgadget`：用于查找 `gadget`。
+  - `ropper`：用于构造 ROP 链。
+- **示例**：
+  
+  ```python
+  from pwn import *
+  p = process('./vuln')
+  rop = ROP('./vuln')
+  rop.call('system', [next(p.libc.search(b'/bin/sh'))])
+  payload = b'A' * 64 + rop.chain()
+  p.sendline(payload)
+  p.interactive()
+  ```
 
 ## Canary Protect - 金丝雀保护
 
+Canary 是一种栈保护机制，用于检测栈溢出。
+
+- **原理**：在栈上插入一个随机值（Canary），在函数返回前检查是否被修改。
+- **绕过方式**：
+  - 泄露 Canary 值。
+  - 覆盖 Canary 为正确值。
+- **防御机制**：
+  - **随机化 Canary**：每次运行程序时生成不同的 Canary。
+  - **只读 Canary**：防止通过内存写绕过。
+- **示例**：
+
+  ```c
+  char buf[64];
+  long canary = __readgsqword(0x28);  // 读取 Canary
+  __stack_chk_fail();  // Canary 检查失败时调用
+  ```
+
+---
+
 ## 堆利用
+
+堆利用是通过利用堆管理器的漏洞实现攻击。
+
+- **常见漏洞**：
+  - **Use After Free**（UAF）：释放后使用。
+  - **Double Free**：重复释放同一内存块。
+  - **Heap Overflow**：堆缓冲区溢出。
+- **利用方式**：
+  - 修改堆管理结构，实现任意地址写。
+  - 劫持函数指针（如 `malloc_hook`、`free_hook`）。
+- **工具**：
+  - `gef`：用于调试堆漏洞。
+  - `pwndbg`：GDB 插件，支持堆分析。
+- **示例**：
+
+  ```python
+  from pwn import *
+  p = process('./vuln')
+  payload = b'A' * 64 + p32(0x0804856b)  # 覆盖堆管理结构
+  p.sendline(payload)
+  p.interactive()
+  ```
+
+---
 
 ## VM 逃逸
 
+VM 逃逸是通过虚拟机中的漏洞实现宿主机攻击。
+
+- **原理**：利用虚拟机软件的漏洞，突破虚拟机隔离，访问宿主机资源。
+- **利用方式**：
+  - 利用虚拟机驱动漏洞。
+  - 利用虚拟机管理程序（Hypervisor）漏洞。
+- **防御机制**：
+  - **虚拟机隔离**：增强虚拟机与宿主机的隔离。
+  - **漏洞修复**：及时更新虚拟机软件。
+- **工具**：
+  - `qemu`：用于虚拟机调试。
+  - `VirtualBox`：常见的虚拟机软件。
+
+---
+
 ## House 系列
+
+House 系列是堆利用中的经典技术，包括 House of Force、House of Spirit 等。
+
+### House of Force
+
+- **原理**：通过修改 `top chunk` 的大小，实现任意地址分配。
+- **利用方式**：
+  - 分配内存到目标地址（如 `malloc_hook`）。
+  - 写入目标地址，劫持程序流程。
+- **示例**：
+
+  ```python
+  from pwn import *
+  p = process('./vuln')
+  payload = b'A' * 64 + p32(0x0804856b)  # 修改 top chunk 大小
+  p.sendline(payload)
+  p.interactive()
+  ```
+
+### House of Spirit
+
+- **原理**：通过伪造 `free chunk`，实现任意地址释放。
+- **利用方式**：
+  - 释放伪造的 `chunk`，修改堆管理结构。
+  - 分配内存到目标地址。
+- **示例**：
+
+  ```python
+  from pwn import *
+  p = process('./vuln')
+  payload = b'A' * 64 + p32(0x0804856b)  # 伪造 free chunk
+  p.sendline(payload)
+  p.interactive()
+  ```
+
+---
+
+## 实践与练习
+
+1. **栈溢出利用**：编写漏洞利用脚本，利用栈溢出漏洞获取 shell。
+2. **堆溢出利用**：利用堆溢出漏洞，修改堆管理结构。
+3. **ROP 链构造**：构造 ROP 链，执行系统调用。
+4. **格式化字符串漏洞利用**：利用格式化字符串漏洞读取栈上的数据。

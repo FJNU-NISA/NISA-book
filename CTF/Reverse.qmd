@@ -1,31 +1,159 @@
 # Reverse - 二进制程序逆向
 
+逆向工程是 CTF 竞赛中的重要方向，主要涉及二进制程序的分析和破解，包括反编译、反汇编、常见算法识别等。
+
 ## 反编译
+
+反编译是将二进制程序转换为高级语言代码的过程，通常用于分析程序的逻辑和功能。
+
+- **工具**：
+  - **Ghidra**：开源的反编译工具，支持多种架构。
+  - **IDA Pro**：功能强大的反编译工具，支持多种架构和插件。
+  - **Binary Ninja**：用户友好的反编译工具，支持多种架构。
+- **示例**：
+
+  ```c
+  // 反编译后的 C 代码
+  int main() {
+      printf("Hello, World!\n");
+      return 0;
+  }
+  ```
 
 ## 反汇编
 
+反汇编是将二进制程序转换为汇编代码的过程，通常用于分析程序的底层实现。
+
+- **工具**：
+  - **objdump**：Linux 下的反汇编工具。
+  - **IDA Pro**：支持反汇编和反编译。
+  - **Radare2**：开源的反汇编工具，支持多种架构。
+- **示例**：
+
+  ```asm
+  ; 反汇编后的汇编代码
+  main:
+      push    rbp
+      mov     rbp, rsp
+      lea     rdi, [rip+0x1000]
+      call    printf
+      mov     eax, 0
+      pop     rbp
+      ret
+  ```
+
 ## 常见算法
+
+在逆向工程中，识别和分析程序中的常见算法是重要的一环。
 
 ### 常见编码算法特征
 
 #### ROT13 编码
 
+- **原理**：将字母表中的每个字母替换为第 13 个字母，非字母字符保持不变。
+- **示例**：
+
+  ```python
+  def rot13(s):
+      return s.translate(str.maketrans(
+          'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
+          'NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm'
+      ))
+  print(rot13("Hello, World!"))  # 输出 "Uryyb, Jbeyq!"
+  ```
+
 #### Base64 编码
 
+- **原理**：将二进制数据转换为可打印字符，通常用于数据传输。
+- **示例**：
+
+  ```python
+  import base64
+  encoded = base64.b64encode(b"Hello, World!")
+  print(encoded)  # 输出 b'SGVsbG8sIFdvcmxkIQ=='
+  ```
+
 ##### Base64 换表
+
+- **原理**：使用自定义的 Base64 编码表，增加破解难度。
+- **示例**：
+
+  ```python
+  import base64
+  custom_table = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+  encoded = base64.b64encode(b"Hello, World!", custom_table)
+  print(encoded)
+  ```
 
 ### 常见加密算法特征
 
 #### AES 加密算法
 
+- **原理**：对称加密算法，使用 128、192 或 256 位密钥。
+- **特征**：
+  - 使用 S 盒和逆 S 盒进行非线性变换。
+  - 包含多轮加密（10、12 或 14 轮）。
+- **示例**：
+
+  ```python
+  from Crypto.Cipher import AES
+  key = b'Sixteen byte key'
+  cipher = AES.new(key, AES.MODE_ECB)
+  encrypted = cipher.encrypt(b"Hello, World!")
+  print(encrypted)
+  ```
+
 #### TEA 加密算法
 
+- **原理**：对称加密算法，使用 128 位密钥，包含 64 轮加密。
+- **特征**：
+  - 使用简单的加法、移位和异或操作。
+  - 密钥调度算法生成轮密钥。
+- **示例**：
+
+  ```python
+  def tea_encrypt(v, k):
+      delta = 0x9e3779b9
+      v0, v1 = v[0], v[1]
+      sum = 0
+      for i in range(32):
+          sum += delta
+          v0 += ((v1 << 4) + k[0]) ^ (v1 + sum) ^ ((v1 >> 5) + k[1])
+          v1 += ((v0 << 4) + k[2]) ^ (v0 + sum) ^ ((v0 >> 5) + k[3])
+      return v0, v1
+  ```
+
 ## 常见二进制壳
+
+二进制壳是用于保护程序的技术，通常包括压缩壳和加密壳。
 
 ### 压缩壳
 
 #### UPX
 
+- **原理**：将程序压缩，运行时解压。
+- **特征**：
+  - 文件头包含 `UPX` 标志。
+  - 使用简单的压缩算法。
+- **脱壳方法**：
+  - 使用 `UPX` 自带的脱壳工具：`upx -d target.exe`。
+
 ### 加密壳
 
 #### .Net Reactor
+
+- **原理**：对 .NET 程序进行加密和混淆。
+- **特征**：
+  - 文件头包含 `.Net Reactor` 标志。
+  - 使用复杂的加密和混淆技术。
+- **脱壳方法**：
+  - 使用 `de4dot` 工具进行脱壳：`de4dot target.exe`。
+
+---
+
+## 实践与练习
+
+1. **反编译练习**：使用 Ghidra 或 IDA Pro 反编译一个二进制程序，分析其逻辑。
+2. **算法识别**：分析一个二进制程序，识别其中的加密或编码算法。
+3. **脱壳练习**：使用 UPX 工具对一个压缩壳程序进行脱壳。
+4. **加密壳分析**：使用 de4dot 工具对一个 .Net Reactor 加密壳程序进行脱壳。
