@@ -8,10 +8,10 @@
 
 ### yafu
 
-### Python - gmpy2
+### gmpy2
 
-### Python - pycryptodome
+### pycryptodome
 
-### Python - libnum
+### libnum
 
 ### Sage
