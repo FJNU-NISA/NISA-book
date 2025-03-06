@@ -7,8 +7,6 @@ book:
   date: "2024/12/13"
   chapters:
     - index.qmd
-    - intro.qmd
-    - summary.qmd
     - part: CTF - 夺旗赛
       chapters: 
         - CTF/intro.qmd
@@ -42,9 +40,6 @@ book:
     - part: ICS - 工业安全
       chapters: 
         - ICS/intro.qmd
-    - references.qmd
-
-bibliography: references.bib
 
 format:
   html:
